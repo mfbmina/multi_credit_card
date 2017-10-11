@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171008020039) do
+ActiveRecord::Schema.define(version: 20171011025321) do
 
   create_table "users", force: :cascade do |t|
     t.string "email"
@@ -18,6 +18,15 @@ ActiveRecord::Schema.define(version: 20171008020039) do
     t.string "last_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "wallets", force: :cascade do |t|
+    t.decimal "limit", precision: 8, scale: 2, default: "0.0"
+    t.decimal "decimal", precision: 8, scale: 2, default: "0.0"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 
 end
