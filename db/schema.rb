@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171011025321) do
+ActiveRecord::Schema.define(version: 20171012001803) do
+
+  create_table "cards", force: :cascade do |t|
+    t.string "number"
+    t.date "due_date"
+    t.date "exp_date"
+    t.integer "cvv"
+    t.decimal "limit", precision: 8, scale: 2, default: "0.0"
+    t.decimal "decimal", precision: 8, scale: 2, default: "0.0"
+    t.decimal "spent_value", precision: 8, scale: 2, default: "0.0"
+    t.integer "wallet_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["wallet_id"], name: "index_cards_on_wallet_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email"

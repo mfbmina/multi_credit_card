@@ -1,9 +1,11 @@
 class Wallet < ApplicationRecord
   belongs_to :user
 
+  has_many :cards
+
   validates_presence_of :user
 
   def maximum_limit
-    0
+    cards.sum(:limit)
   end
 end
