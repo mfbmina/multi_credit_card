@@ -9,8 +9,8 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
+    @user = CreateUser.call(user_params)
+    if @user.persisted?
       render :show, status: :created
     else
       render json: @user.errors, status: :bad_request

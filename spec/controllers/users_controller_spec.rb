@@ -4,7 +4,7 @@ RSpec.describe UsersController, type: :controller do
   render_views
 
   describe 'GET index' do
-    let!(:user) { User.create(email: 'example@mail.com', first_name: 'Example', last_name: 'Example') }
+    let!(:user) { create(:user) }
 
     before { get :index, format: :json }
 
@@ -32,9 +32,12 @@ RSpec.describe UsersController, type: :controller do
 
   describe 'GET show' do
     context 'with a valid id' do
-      let(:user) { User.create(email: 'example@mail.com', first_name: 'Example', last_name: 'Example') }
+      let(:user) { create(:user) }
 
-      before { get :show, params: { id: user.id }, format: :json }
+      before do
+        create(:wallet, user: user)
+        get :show, params: { id: user.id }, format: :json
+      end
 
       it 'returns success' do
         expect(response.status).to eq(200)
@@ -50,7 +53,11 @@ RSpec.describe UsersController, type: :controller do
           first_name: user.first_name,
           last_name: user.last_name,
           full_name: user.full_name,
-          email: user.email
+          email: user.email,
+          wallet: {
+            limit: user.wallet.limit.to_f.to_s,
+            max_limit: user.wallet.max_limit.to_f.to_s
+          }
         })
       end
     end
@@ -83,7 +90,11 @@ RSpec.describe UsersController, type: :controller do
           first_name: 'Example',
           last_name: 'Example',
           full_name: 'Example Example',
-          email: 'example@mail.com'
+          email: 'example@mail.com',
+          wallet: {
+            limit: "0.0",
+            max_limit: "0.0"
+          }
         })
       end
     end
@@ -110,12 +121,15 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe 'PATCH update' do
-    let!(:user) { User.create(email: 'example@mail.com', first_name: 'Example', last_name: 'Example') }
+    let(:user) { create(:user) }
 
-    before { patch :update, params: params, format: :json }
+    before do
+      create(:wallet, user: user)
+      patch :update, params: params, format: :json
+    end
 
     context 'with valid body' do
-      let(:params) { { id: user.id, email: 'example2@mail.com' } }
+      let(:params) { { id: user.id, email: 'example@mail.com' } }
 
       it 'returns success' do
         expect(response.status).to eq(200)
@@ -123,11 +137,15 @@ RSpec.describe UsersController, type: :controller do
 
       it 'returns a json' do
         expect(JSON.parse(response.body, symbolize_names: true)).to eq({
-          id: 1,
-          first_name: 'Example',
-          last_name: 'Example',
-          full_name: 'Example Example',
-          email: 'example2@mail.com'
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          full_name: user.full_name,
+          email: 'example@mail.com',
+          wallet: {
+            limit: user.wallet.limit.to_f.to_s,
+            max_limit: user.wallet.max_limit.to_f.to_s
+          }
         })
       end
     end
