@@ -8,4 +8,8 @@ class Card < ApplicationRecord
   validates :limit, presence: true
   validates :spent_value, presence: true
   validates :wallet, presence: true
+
+  def truncate_number
+    number.gsub(/\A[\d]{12}/, '*' * 12)
+  end
 end

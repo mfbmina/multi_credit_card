@@ -33,11 +33,10 @@ RSpec.describe UsersController, type: :controller do
   describe 'GET show' do
     context 'with a valid id' do
       let(:user) { create(:user) }
+      let(:wallet) { create(:wallet, user: user) }
+      let!(:card) { create(:card, wallet: wallet) }
 
-      before do
-        create(:wallet, user: user)
-        get :show, params: { id: user.id }, format: :json
-      end
+      before { get :show, params: { id: user.id }, format: :json }
 
       it 'returns success' do
         expect(response.status).to eq(200)
@@ -55,8 +54,14 @@ RSpec.describe UsersController, type: :controller do
           full_name: user.full_name,
           email: user.email,
           wallet: {
-            limit: user.wallet.limit.to_f.to_s,
-            max_limit: user.wallet.max_limit.to_f.to_s
+            limit: wallet.limit.to_f.to_s,
+            max_limit: wallet.max_limit.to_f.to_s,
+            cards: [{
+              id: card.id,
+              truncate_number: card.truncate_number,
+              exp_date: card.exp_date.strftime('%Y-%m-%d'),
+              url: user_card_url(user, card)
+            }]
           }
         })
       end
@@ -93,7 +98,8 @@ RSpec.describe UsersController, type: :controller do
           email: 'example@mail.com',
           wallet: {
             limit: "0.0",
-            max_limit: "0.0"
+            max_limit: "0.0",
+            cards: []
           }
         })
       end
@@ -144,7 +150,8 @@ RSpec.describe UsersController, type: :controller do
           email: 'example@mail.com',
           wallet: {
             limit: user.wallet.limit.to_f.to_s,
-            max_limit: user.wallet.max_limit.to_f.to_s
+            max_limit: user.wallet.max_limit.to_f.to_s,
+            cards: []
           }
         })
       end
