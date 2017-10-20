@@ -3,9 +3,10 @@ require 'rails_helper'
 RSpec.describe UsersController, type: :controller do
   render_views
 
-  describe 'GET index' do
-    let!(:user) { create(:user) }
+  let!(:user) { create(:user) }
+  let(:headers) { { 'Authorization' => user.authentication_token } }
 
+  describe 'GET index' do
     before { get :index, format: :json }
 
     it 'returns success' do
@@ -24,6 +25,7 @@ RSpec.describe UsersController, type: :controller do
           last_name: user.last_name,
           full_name: user.full_name,
           email: user.email,
+          token: user.authentication_token,
           url: user_url(user)
         }]
       )
@@ -31,8 +33,9 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe 'GET show' do
+    before { request.headers.merge!(headers) }
+
     context 'with a valid id' do
-      let(:user) { create(:user) }
       let(:wallet) { create(:wallet, user: user) }
       let!(:card) { create(:card, wallet: wallet) }
 
@@ -53,6 +56,7 @@ RSpec.describe UsersController, type: :controller do
           last_name: user.last_name,
           full_name: user.full_name,
           email: user.email,
+          token: user.authentication_token,
           wallet: {
             limit: wallet.limit.to_f.to_s,
             max_limit: wallet.max_limit.to_f.to_s,
@@ -90,18 +94,19 @@ RSpec.describe UsersController, type: :controller do
 
       it 'returns a json' do
         post :create, params: params, format: :json
-        expect(JSON.parse(response.body, symbolize_names: true)).to eq({
-          id: 1,
+        expect(JSON.parse(response.body, symbolize_names: true)).to include(
+          id: 2,
           first_name: 'Example',
           last_name: 'Example',
           full_name: 'Example Example',
           email: 'example@mail.com',
+          token: /.+\z/,
           wallet: {
             limit: "0.0",
             max_limit: "0.0",
             cards: []
           }
-        })
+        )
       end
     end
 
@@ -127,10 +132,10 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe 'PATCH update' do
-    let(:user) { create(:user) }
+    let!(:wallet) { create(:wallet, user: user) }
 
     before do
-      create(:wallet, user: user)
+      request.headers.merge!(headers)
       patch :update, params: params, format: :json
     end
 
@@ -142,12 +147,13 @@ RSpec.describe UsersController, type: :controller do
       end
 
       it 'returns a json' do
-        expect(JSON.parse(response.body, symbolize_names: true)).to eq({
+        expect(JSON.parse(response.body, symbolize_names: true)).to include({
           id: user.id,
           first_name: user.first_name,
           last_name: user.last_name,
           full_name: user.full_name,
           email: 'example@mail.com',
+          token: /.+/,
           wallet: {
             limit: user.wallet.limit.to_f.to_s,
             max_limit: user.wallet.max_limit.to_f.to_s,
@@ -179,9 +185,9 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe 'DELETE destroy' do
-    context 'with a valid id' do
-      let(:user) { User.create(email: 'example@mail.com', first_name: 'Example', last_name: 'Example') }
+    before { request.headers.merge!(headers) }
 
+    context 'with a valid id' do
       before { delete :destroy, params: { id: user.id }, format: :json }
 
       it 'returns no content' do

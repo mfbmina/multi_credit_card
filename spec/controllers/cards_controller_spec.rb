@@ -6,6 +6,8 @@ RSpec.describe CardsController, type: :controller do
   let(:card) { create(:card) }
   let(:user) { card.wallet.user }
 
+  before { request.headers.merge!('Authorization' => user.authentication_token) }
+
   describe 'GET show' do
     context 'with a valid id' do
       before { get :show, params: { user_id: user.id, id: card.id }, format: :json }

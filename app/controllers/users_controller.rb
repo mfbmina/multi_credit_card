@@ -1,4 +1,7 @@
 class UsersController < ApplicationController
+  skip_before_action :authenticate_user_from_token!, only: [:index, :create]
+  skip_before_action :authenticate_user!, only: [:index, :create]
+
   before_action :set_user, except: [:index, :create]
 
   def index
