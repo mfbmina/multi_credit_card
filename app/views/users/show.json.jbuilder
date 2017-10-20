@@ -11,6 +11,6 @@ json.wallet do
     json.id card.id
     json.truncate_number card.truncate_number
     json.exp_date card.exp_date
-    json.url user_card_url(@user, card)
+    json.url card_url(card)
   end
 end

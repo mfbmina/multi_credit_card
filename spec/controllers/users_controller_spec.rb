@@ -64,7 +64,7 @@ RSpec.describe UsersController, type: :controller do
               id: card.id,
               truncate_number: card.truncate_number,
               exp_date: card.exp_date.strftime('%Y-%m-%d'),
-              url: user_card_url(user, card)
+              url: card_url(card)
             }]
           }
         })

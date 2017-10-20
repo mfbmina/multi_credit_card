@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   devise_for :users, only: []
 
-  resources :users, except: [:new, :edit] do
-    resources :cards, except: [:index, :new, :edit, :update]
-  end
+  resources :users, except: [:new, :edit]
+
+  resources :cards, except: [:new, :edit, :update]
 end

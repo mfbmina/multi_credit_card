@@ -1,12 +1,15 @@
 class CardsController < ApplicationController
-  before_action :set_user
-  before_action :set_card, except: :create
+  before_action :set_card, except: [:index, :create]
+
+  def index
+    @cards = current_user.wallet.cards
+  end
 
   def show
   end
 
   def create
-    @card = AddCard.call(@user, card_params)
+    @card = AddCard.call(current_user, card_params)
     if @card.persisted?
       render :show, status: :created
     else
@@ -20,12 +23,8 @@ class CardsController < ApplicationController
 
   private
 
-  def set_user
-    @user = User.find(params[:user_id])
-  end
-
   def set_card
-    @card = @user.wallet.cards.find(params[:id])
+    @card = current_user.wallet.cards.find(params[:id])
   end
 
   def card_params
