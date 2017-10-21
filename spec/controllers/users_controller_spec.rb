@@ -72,9 +72,14 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context 'with an invalid id' do
+      before { get :show, params: { id: 999_999 }, format: :json }
+
       it 'returns not found' do
-        get :show, params: { id: 999_999 }, format: :json
         expect(response.status).to eq(404)
+      end
+
+      it 'returns an error message' do
+        expect(JSON.parse(response.body, symbolize_names: true)).to include(errors: ["Couldn't find User with ID 999999"])
       end
     end
   end
@@ -181,6 +186,10 @@ RSpec.describe UsersController, type: :controller do
       it 'returns not found' do
         expect(response.status).to eq(404)
       end
+
+      it 'returns an error message' do
+        expect(JSON.parse(response.body, symbolize_names: true)).to include(errors: ["Couldn't find User with ID 999999"])
+      end
     end
   end
 
@@ -200,9 +209,14 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context 'with an invalid id' do
+      before { delete :destroy, params: { id: 999_999 }, format: :json }
+
       it 'returns not found' do
-        delete :destroy, params: { id: 999_999 }, format: :json
         expect(response.status).to eq(404)
+      end
+
+      it 'returns an error message' do
+        expect(JSON.parse(response.body, symbolize_names: true)).to include(errors: ["Couldn't find User with ID 999999"])
       end
     end
   end
