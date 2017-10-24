@@ -28,6 +28,6 @@ class CardsController < ApplicationController
   end
 
   def card_params
-    params.permit(:number, :due_date, :exp_date, :cvv, :limit)
+    params.permit(:number, :due_date, :exp_date, :cvv, :real_limit)
   end
 end

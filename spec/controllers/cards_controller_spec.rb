@@ -24,7 +24,7 @@ RSpec.describe CardsController, type: :controller do
         [{
           id: card.id,
           truncate_number: card.truncate_number,
-          limit: card.limit.to_f.to_s,
+          real_limit: card.real_limit.to_f.to_s,
           spent_value: card.spent_value.to_f.to_s,
           exp_date: card.exp_date.strftime('%Y-%m-%d'),
           due_date: card.due_date.strftime('%Y-%m-%d')
@@ -50,7 +50,7 @@ RSpec.describe CardsController, type: :controller do
         expect(JSON.parse(response.body, symbolize_names: true)).to eq(
           id: card.id,
           truncate_number: card.truncate_number,
-          limit: card.limit.to_f.to_s,
+          real_limit: card.real_limit.to_f.to_s,
           spent_value: card.spent_value.to_f.to_s,
           exp_date: card.exp_date.strftime('%Y-%m-%d'),
           due_date: card.due_date.strftime('%Y-%m-%d')
@@ -89,7 +89,7 @@ RSpec.describe CardsController, type: :controller do
         expect(JSON.parse(response.body, symbolize_names: true)).to eq({
           id: 2,
           truncate_number: '************1111',
-          limit: "1000.0",
+          real_limit: "1000.0",
           spent_value: "0.0",
           exp_date: "2022-10-01",
           due_date: "2017-10-30"

@@ -5,15 +5,19 @@ class Card < ApplicationRecord
   validates :due_date, presence: true
   validates :exp_date, presence: true
   validates :cvv, presence: true, length: { is: 3 }
-  validates :limit, presence: true
+  validates :real_limit, presence: true
   validates :spent_value, presence: true
   validates :wallet, presence: true
 
-  def float_limit
-    limit - spent_value
-  end
+  before_validation :update_float_limit
 
   def truncate_number
     number.gsub(/\A[\d]{12}/, '*' * 12)
+  end
+
+  private
+
+  def update_float_limit
+    self.float_limit = real_limit - spent_value
   end
 end

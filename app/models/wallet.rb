@@ -6,6 +6,6 @@ class Wallet < ApplicationRecord
   validates_presence_of :user
 
   def max_limit
-    cards.sum(:limit)
+    cards.sum(:float_limit)
   end
 end

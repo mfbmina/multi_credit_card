@@ -17,7 +17,7 @@ FactoryGirl.define do
     due_date "2017-10-30"
     exp_date "2022-10-01"
     cvv "123"
-    limit 1000
+    real_limit 1000
     wallet
   end
 end

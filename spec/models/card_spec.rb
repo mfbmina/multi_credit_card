@@ -1,10 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Card, type: :model do
-  subject { Card.new(number: '4444444444444444', limit: 100, spent_value: 50) }
+  subject { Card.new(number: '4444444444444444', real_limit: 100, spent_value: 50) }
 
   describe '#float_limit' do
     it 'returns the float limit' do
+      subject.valid?
       expect(subject.float_limit).to eq(50)
     end
   end
